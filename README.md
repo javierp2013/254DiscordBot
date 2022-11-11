@@ -1,6 +1,6 @@
 ﻿<p align="center">
   <a>
-    <img src="http://www.fullerton.edu/_resources/images/core/csuf-logo-web-reversedbw.png" alt="Logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/CSUF_Titans_Logo.svg/201px-CSUF_Titans_Logo.svg.png?20170424215842" alt="Logo">
   </a>
 </p>
 TuffyBot is a helpful Booru surfing bot with friendly functions like role reactions and minigames!
