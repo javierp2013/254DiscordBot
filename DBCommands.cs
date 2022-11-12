@@ -1,19 +1,19 @@
-﻿using _254DiscordBot.Commands;
-using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Text;
+using _254DiscordBot.Commands;
+using Discord.WebSocket;
 
 namespace _254DiscordBot
 {
     internal static class DBCommands
     {
         //cs is connection string for DB
-        private static readonly string cs = @"URI=file:Database.db; foreign keys=true;";
+        private static readonly string connectionString = @"URI=file:Database.db; foreign keys=true;";
 
         //sourced from previous project:
-        public static int getErrorID(string errMessage)
+        public static int GetErrorID(string errMessage)
         {
             if (errMessage.Contains("FOREIGN KEY"))
                 return 0;
@@ -22,11 +22,11 @@ namespace _254DiscordBot
             else
                 return -1;
         }
-        public static int updateUserList(List<SocketGuildUser> listOfUsers, ulong serverID)
+        public static int UpdateUserList(List<SocketGuildUser> listOfUsers, ulong serverID)
         {
             int rowsAffected = 0;
             //for all users in server, add them to Users DB, and also add them to relational table that tells us what server they are in
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var cmd = new SQLiteCommand(con);
             {
@@ -47,10 +47,10 @@ namespace _254DiscordBot
         }
 
         //this adds a server to Servers Table, to keep track of servers that bot is in, and for the In_Server table to have a valid foreign key for serverID
-        public static void addOrUpdateServer(ulong serverID, string name)
+        public static void AddOrUpdateServer(ulong serverID, string name)
         {
             //Use prepared statement in order to assure the correct insertion and prevent SQL injection.
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var cmd = new SQLiteCommand(con);
             {
@@ -61,10 +61,10 @@ namespace _254DiscordBot
         }
 
         //just runs SQL from two functions above to DB
-        public static int insertData(string statement)
+        public static int InsertData(string statement)
         {
             int rowsChanged = 0;
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
 
             using var cmd = new SQLiteCommand(con);
@@ -74,9 +74,9 @@ namespace _254DiscordBot
             }
             return rowsChanged;
         }
-        public static string getMoneyBalanceDMs(ulong userID)
+        public static string GetMoneyBalanceDMs(ulong userID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT COUNT(ServerID) FROM In_Server WHERE UserID={userID}", con);
             using SQLiteDataReader rdr = commd.ExecuteReader();
@@ -94,16 +94,16 @@ namespace _254DiscordBot
             using SQLiteDataReader msgs = commd.ExecuteReader();
             while (msgs.Read())
             {
-                bal = getMoneyBalance(userID, (ulong)msgs.GetInt64(1));
+                bal = GetMoneyBalance(userID, (ulong)msgs.GetInt64(1));
                 if (bal == "NONE")
                 { bal = "0"; }
                 response = response + "**" + msgs.GetString(0) + ":** " + bal + " Bits\n";
             }
             return response;
         }
-        public static void addUsertoMoney(ulong UserID, int amount, ulong serverID, string timestamp)
+        public static void AddUsertoMoney(ulong UserID, int amount, ulong serverID, string timestamp)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //Adds users to table with set money as well as a timestamp to determine when they can run their next ~daily
             using var cmd = new SQLiteCommand(con);
@@ -113,9 +113,9 @@ namespace _254DiscordBot
                 cmd.ExecuteNonQuery();
             }
         }
-        public static void giveMoney(ulong UserID, int amount, ulong serverID, string timestamp)
+        public static void GiveMoney(ulong UserID, int amount, ulong serverID, string timestamp)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //Adds users to table with set money as well as a timestamp to determine when they can run their next ~daily
             using var cmd = new SQLiteCommand(con);
@@ -126,9 +126,9 @@ namespace _254DiscordBot
             }
         }
 
-        public static int payMoney(ulong userID, long amount, ulong serverID)
+        public static int PayMoney(ulong userID, long amount, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             int rowsAffected = 0;
             using var cmd = new SQLiteCommand(con);
@@ -138,9 +138,9 @@ namespace _254DiscordBot
             }
             return rowsAffected;
         }
-        public static string getMoneyTimeStamp(ulong userID, ulong serverID)
+        public static string GetMoneyTimeStamp(ulong userID, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT Count(TimeStamp) FROM Money WHERE UserID={userID} AND ServerID= {serverID}", con);
             using SQLiteDataReader rdr = commd.ExecuteReader();
@@ -157,9 +157,9 @@ namespace _254DiscordBot
             return msgs.GetString(0);
         }
 
-        public static string getMoneyBalance(ulong userID, ulong serverID)
+        public static string GetMoneyBalance(ulong userID, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT Count(Amount) FROM Money WHERE UserID={userID} AND ServerID= {serverID}", con);
             using SQLiteDataReader rdr = commd.ExecuteReader();
@@ -176,9 +176,9 @@ namespace _254DiscordBot
             return msgs.GetInt64(0).ToString();
         }
 
-        public static string getMoneyLeaders(ulong serverID)
+        public static string GetMoneyLeaders(ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             string board = "**Leaderboard:**\n```";
             using var commd = new SQLiteCommand($"SELECT Amount, Users.Username FROM Money JOIN Users ON Users.ID = Money.UserID WHERE ServerID={serverID} GROUP BY Users.Username ORDER BY Amount DESC LIMIT 10", con);
@@ -190,9 +190,9 @@ namespace _254DiscordBot
 
             return board + "```";
         }
-        public static void addStonk(string name, int numOfShares, int price, ulong serverID)
+        public static void AddStonk(string name, int numOfShares, int price, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //use prepared statement to make sure user provided data doesn't cause issues
             using var cmd = new SQLiteCommand(con);
@@ -204,10 +204,10 @@ namespace _254DiscordBot
             }
         }
 
-        public static List<Stonk> getStonkObj(ulong serverID)
+        public static List<Stonk> GetStonkObj(ulong serverID)
         {
             List<Stonk> temp = new List<Stonk>();
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT Name, NumberOfShares, Price FROM Stonks WHERE ServerID = {serverID};", con);
             using SQLiteDataReader rdr = commd.ExecuteReader();
@@ -218,11 +218,11 @@ namespace _254DiscordBot
             return temp;
         }
 
-        public static string getStonks(ulong serverID)
+        public static string GetStonks(ulong serverID)
         {
-            Dictionary<string, int> availStonks = getPurchasedStonks(serverID);
+            Dictionary<string, int> availStonks = GetPurchasedStonks(serverID);
             int availableStonks = 0;
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             string response = "``Current Stonks:``\n";
             con.Open();
             using var commd = new SQLiteCommand($"SELECT Name, NumberOfShares, Price FROM Stonks WHERE ServerID = {serverID};", con);
@@ -242,9 +242,9 @@ namespace _254DiscordBot
             return response;
         }
 
-        public static Dictionary<string, int> getPurchasedStonks(ulong serverID)
+        public static Dictionary<string, int> GetPurchasedStonks(ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             Dictionary<string, int> temp = new Dictionary<string, int>();
             con.Open();
             using var commd = new SQLiteCommand($"SELECT StonkName, SUM(NumOfShares) FROM Stonk_Record WHERE ServerID = {serverID} GROUP BY StonkName;", con);
@@ -256,9 +256,9 @@ namespace _254DiscordBot
             return temp;
         }
 
-        public static List<string> getStonkInfo(string name)
+        public static List<string> GetStonkInfo(string name)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             List<string> temp = new List<string>();
             con.Open();
             using var commd = new SQLiteCommand($"SELECT Name, NumberOfShares, Price FROM Stonks WHERE Name = @name;", con);
@@ -273,9 +273,9 @@ namespace _254DiscordBot
             return temp;
         }
 
-        public static void editStonkShares(string name, int numOfShares)
+        public static void EditStonkShares(string name, int numOfShares)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //use prepared statement to make sure user provided data doesn't cause issues
             using var cmd = new SQLiteCommand(con);
@@ -287,9 +287,9 @@ namespace _254DiscordBot
             }
         }
 
-        public static void editStonkPrice(string name, int price, ulong serverID)
+        public static void EditStonkPrice(string name, int price, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //use prepared statement to make sure user provided data doesn't cause issues
             using var cmd = new SQLiteCommand(con);
@@ -301,9 +301,9 @@ namespace _254DiscordBot
             }
         }
 
-        public static void addStonkPurchase(string name, int numOfShares, ulong userID, ulong serverID, string date)
+        public static void AddStonkPurchase(string name, int numOfShares, ulong userID, ulong serverID, string date)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             var command = con.CreateCommand();
             command.CommandText =
@@ -315,9 +315,9 @@ namespace _254DiscordBot
             command.ExecuteNonQuery();
         }
 
-        public static List<int> getMaxShares(string name, ulong serverID)
+        public static List<int> GetMaxShares(string name, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             List<int> temp = new List<int>();
             using var commd = new SQLiteCommand($"SELECT NumberOfShares, Price FROM Stonks WHERE Name=@name AND ServerID={serverID};", con);
@@ -347,9 +347,9 @@ namespace _254DiscordBot
             return temp;
         }
 
-        public static string getOwnedStonks(ulong userID, ulong serverID)
+        public static string GetOwnedStonks(ulong userID, ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             string response = "``Owned Stonks:``\n";
             con.Open();
             using var commd = new SQLiteCommand($"SELECT StonkName, NumOfShares FROM Stonk_Record WHERE UserID = {userID} AND ServerID = {serverID} GROUP BY StonkName", con);
@@ -363,9 +363,9 @@ namespace _254DiscordBot
             }
             return response;
         }
-        public static bool hasEnoughStonk(ulong userID, ulong serverID, string stonkName, int amount)
+        public static bool HasEnoughStonk(ulong userID, ulong serverID, string stonkName, int amount)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT NumOfShares FROM Stonk_Record WHERE UserID = {userID} AND ServerID = {serverID} AND StonkName= @name GROUP BY StonkName", con);
             commd.Parameters.AddWithValue("@name", stonkName);
@@ -380,18 +380,18 @@ namespace _254DiscordBot
             return false;
         }
 
-        public static void sellStonk(ulong userID, ulong serverID, string stonkName, int amount)
+        public static void SellStonk(ulong userID, ulong serverID, string stonkName, int amount)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"UPDATE Stonk_Record SET NumOfShares = NumOfShares - {amount} WHERE StonkName = @name AND ServerID = {serverID} AND UserID = {userID}", con);
             commd.Parameters.AddWithValue("@name", stonkName);
             commd.ExecuteNonQuery();
         }
 
-        public static void stonkConfigSetup(ulong serverID, ulong channelID)
+        public static void StonkConfigSetup(ulong serverID, ulong channelID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //use prepared statement to make sure user provided data doesn't cause issues
             using var cmd = new SQLiteCommand(con);
@@ -401,9 +401,9 @@ namespace _254DiscordBot
             }
         }
 
-        public static ulong getStonkChannel(ulong serverID)
+        public static ulong GetStonkChannel(ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT Count(ServerID) FROM StonkConfig WHERE ServerID= {serverID}", con);
             using SQLiteDataReader rdr = commd.ExecuteReader();
@@ -422,7 +422,7 @@ namespace _254DiscordBot
 
         public static void AddReminder(ulong userID, ulong serverID, string title, int interval, string timeAdded)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //Adds a reminder to the table
             using var cmd = new SQLiteCommand(con);
@@ -435,9 +435,9 @@ namespace _254DiscordBot
             }
         }
 
-        public static List<ReminderObject> getReminders()
+        public static List<ReminderObject> GetReminders()
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             List<ReminderObject> temp = new List<ReminderObject>();
             con.Open();
             using var commd = new SQLiteCommand($"SELECT TimeAdded, Title, TimeInterval, UserID, ServerID FROM Reminders;", con);
@@ -448,9 +448,9 @@ namespace _254DiscordBot
             }
             return temp;
         }
-        public static List<ReminderObject> getReminders(ulong userID)
+        public static List<ReminderObject> GetReminders(ulong userID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             List<ReminderObject> temp = new List<ReminderObject>();
             con.Open();
             using var commd = new SQLiteCommand($"SELECT TimeAdded, Title, TimeInterval, UserID, ServerID FROM Reminders WHERE UserID = {userID};", con);
@@ -461,10 +461,10 @@ namespace _254DiscordBot
             }
             return temp;
         }
-        public static int removeReminder(string title, ulong serverID, ulong userID)
+        public static int RemoveReminder(string title, ulong serverID, ulong userID)
         {
             int rowsAffected = 0;
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var cmd = new SQLiteCommand(con);
             {
@@ -494,9 +494,9 @@ namespace _254DiscordBot
                 return rowsAffected;
             }
         }
-        public static void setReactionRole(ulong roleID, ulong serverID, string emojiName, ulong messageID)
+        public static void SetReactionRole(ulong roleID, ulong serverID, string emojiName, ulong messageID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             //Adds a reaction and role pair to the DB
             using var cmd = new SQLiteCommand(con);
@@ -507,9 +507,9 @@ namespace _254DiscordBot
                 cmd.ExecuteNonQuery();
             }
         }
-        public static ulong reactionRoleExists(ulong messageID, string emojiName)
+        public static ulong ReactionRoleExists(ulong messageID, string emojiName)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var commd = new SQLiteCommand($"SELECT RoleID FROM Reaction_Roles WHERE MessageID={messageID} AND Emoji = '{emojiName}'", con);
             using SQLiteDataReader rdr = commd.ExecuteReader();
@@ -524,10 +524,10 @@ namespace _254DiscordBot
             return roleID;
         }
 
-        public static string removeRole(ulong roleID)
+        public static string RemoveRole(ulong roleID)
         {
             int rowsAffected = 0;
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var cmd = new SQLiteCommand(con);
             {
@@ -542,9 +542,9 @@ namespace _254DiscordBot
                 return "ERROR! Code: " + rowsAffected;
         }
 
-        public static Dictionary<ulong, string> listRoles(ulong serverID)
+        public static Dictionary<ulong, string> ListRoles(ulong serverID)
         {
-            using var con = new SQLiteConnection(cs);
+            using var con = new SQLiteConnection(connectionString);
             con.Open();
             Dictionary<ulong, string> temp = new Dictionary<ulong, string>();
             using var commd = new SQLiteCommand($"SELECT RoleID, Emoji FROM Reaction_Roles WHERE ServerID={serverID}", con);

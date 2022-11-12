@@ -7,27 +7,27 @@ using System.Threading.Tasks;
 
 namespace _254DiscordBot
 {
-    public class safeBooruUtil
+    public class SafeBooruUtil
     {
-        public class safeOBJ
+        public class SafeOBJ
         {
-            public string directory { get; set; }
-            public string hash { get; set; }
-            public int height { get; set; }
-            public int id { get; set; }
-            public string image { get; set; }
-            public int change { get; set; }
-            public string owner { get; set; }
-            public int parent_id { get; set; }
-            public string rating { get; set; }
-            public bool sample { get; set; }
-            public int sample_height { get; set; }
-            public int sample_width { get; set; }
-            public int? score { get; set; }
-            public string tags { get; set; }
-            public int width { get; set; }
+            public string Directory { get; set; }
+            public string Hash { get; set; }
+            public int Height { get; set; }
+            public int Id { get; set; }
+            public string Image { get; set; }
+            public int Change { get; set; }
+            public string Owner { get; set; }
+            public int Parent_Id { get; set; }
+            public string Rating { get; set; }
+            public bool Sample { get; set; }
+            public int Sample_height { get; set; }
+            public int Sample_width { get; set; }
+            public int? Score { get; set; }
+            public string Tags { get; set; }
+            public int Width { get; set; }
         }
-        public static async Task<string> getJSON(string url)
+        public static async Task<string> GetJSON(string url)
         {
             using (HttpClient client = new HttpClient())
             {

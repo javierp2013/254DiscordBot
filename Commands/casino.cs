@@ -1,11 +1,8 @@
-﻿using _254DiscordBot;
-using Discord.Commands;
-using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Threading.Tasks;
+using _254DiscordBot;
+using Discord.Commands;
 
 namespace CoreWaggles.Commands
 {
@@ -15,8 +12,8 @@ namespace CoreWaggles.Commands
         [Command("bet")]
         public async Task BetAsync(long amount)
         {
-            string balanceString = DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id);
-            if (balanceString == "NONE" || balanceString == "0")
+            string BalanceString = DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id);
+            if (BalanceString == "NONE" || BalanceString == "0")
             {
                 await ReplyAsync("You dont have any money to bet!");
                 return;
@@ -26,23 +23,23 @@ namespace CoreWaggles.Commands
                 await ReplyAsync("You have to bet more than that! Cheapskate.");
                 return;
             }
-            
-            long senderBal = long.Parse(balanceString);
-            if (amount > senderBal || amount <= 0)
+
+            long SenderBal = long.Parse(BalanceString);
+            if (amount > SenderBal || amount <= 0)
             {
-                await ReplyAsync("Sorry, your balance of " + senderBal + " Bits is too low!");
+                await ReplyAsync("Sorry, your balance of " + SenderBal + " Bits is too low!");
                 return;
             }
-            Random rand = new Random();
-            int chosenNum = rand.Next(0, 100);
-            int rowsAffected = 0;
+            Random Rand = new Random();
+            int ChosenNum = Rand.Next(0, 100);
+            int RowsAffected = 0;
             //give it a 40% chance to succeed!
-            if (chosenNum < 41)
+            if (ChosenNum < 41)
             {
-                rowsAffected = DBCommands.payMoney(Context.User.Id, amount, Context.Guild.Id);
-                if (rowsAffected == 1)
+                RowsAffected = DBCommands.PayMoney(Context.User.Id, amount, Context.Guild.Id);
+                if (RowsAffected == 1)
                 {
-                    await ReplyAsync("Congrats! You won " + amount + " Bits, bringing your balance to " + (long.Parse(balanceString) + amount) + "Bits!");
+                    await ReplyAsync("Congrats! You won " + amount + " Bits, bringing your balance to " + (long.Parse(BalanceString) + amount) + "Bits!");
                 }
                 else
                 {
@@ -51,10 +48,10 @@ namespace CoreWaggles.Commands
             }
             else
             {
-                rowsAffected = DBCommands.payMoney(Context.User.Id, -amount, Context.Guild.Id);
-                if (rowsAffected == 1)
+                RowsAffected = DBCommands.PayMoney(Context.User.Id, -amount, Context.Guild.Id);
+                if (RowsAffected == 1)
                 {
-                    await ReplyAsync("Oof. You lost " + amount + " Bits, bringing your balance to " + (long.Parse(balanceString) - amount) + "Bits!");
+                    await ReplyAsync("Oof. You lost " + amount + " Bits, bringing your balance to " + (long.Parse(BalanceString) - amount) + "Bits!");
                 }
                 else
                 {
@@ -64,11 +61,11 @@ namespace CoreWaggles.Commands
         }
 
         [Command("slots")]
-        public async Task playSlots(long amount)
+        public async Task PlaySlots(long amount)
         {
             //check if user has the bits
-            string balanceString = DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id);
-            if (balanceString == "NONE" || balanceString == "0")
+            string BalanceString = DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id);
+            if (BalanceString == "NONE" || BalanceString == "0")
             {
                 await ReplyAsync("You dont have any money to bet!");
                 return;
@@ -78,14 +75,14 @@ namespace CoreWaggles.Commands
                 await ReplyAsync("You have to bet more than that! Cheapskate.");
                 return;
             }
-            long senderBal = long.Parse(balanceString);
-            if (amount > senderBal || amount <= 0)
+            long SenderBal = long.Parse(BalanceString);
+            if (amount > SenderBal || amount <= 0)
             {
-                await ReplyAsync("Sorry, your balance of " + senderBal + " Bits is too low!");
+                await ReplyAsync("Sorry, your balance of " + SenderBal + " Bits is too low!");
                 return;
             }
             //hard codes the emojis that will correspond with every random number
-            Dictionary<int, string> emojiDic = new Dictionary<int, string>
+            Dictionary<int, string> EmojiDic = new Dictionary<int, string>
             {
                 {0, ":lemon:" },
                 {1, ":cherries:" },
@@ -93,42 +90,42 @@ namespace CoreWaggles.Commands
                 {3, ":star:" },
                 {4, ":bell:" }
             };
-            int rowsAffected;
-            List<int> chosenNumbers = new List<int>();
-            Random rand = new Random();
-            string response = "";
+            int RowsAffected;
+            List<int> ChosenNumbers = new List<int>();
+            Random Rand = new Random();
+            string Response = "";
             for (int i = 0; i < 3; i++)
             {
                 //gets a random number and stores it in the list
-                chosenNumbers.Add(rand.Next(5));
+                ChosenNumbers.Add(Rand.Next(5));
                 //gets random number generated from list.
-                response += emojiDic[chosenNumbers[i]] + " ";
+                Response += EmojiDic[ChosenNumbers[i]] + " ";
             }
             //all match
-            if (chosenNumbers[0] == chosenNumbers[1] && chosenNumbers[2] == chosenNumbers[1])
+            if (ChosenNumbers[0] == ChosenNumbers[1] && ChosenNumbers[2] == ChosenNumbers[1])
             {
-                await ReplyAsync(response);
-                rowsAffected = DBCommands.payMoney(Context.User.Id, amount * 3, Context.Guild.Id);
-                await ReplyAsync("3 matches! You win " + (amount * 3) + " Bits, bringing your balance to " + (long.Parse(balanceString) + (amount * 3)) + "Bits!");
+                await ReplyAsync(Response);
+                RowsAffected = DBCommands.PayMoney(Context.User.Id, amount * 3, Context.Guild.Id);
+                await ReplyAsync("3 matches! You win " + (amount * 3) + " Bits, bringing your balance to " + (long.Parse(BalanceString) + (amount * 3)) + "Bits!");
                 return;
             }
             // if 0 matches 1, if 1 matches 2, or 0 matches 2, but not all three
-            else if (chosenNumbers[0] == chosenNumbers[1] || chosenNumbers[2] == chosenNumbers[1] || chosenNumbers[0] == chosenNumbers[2])
+            else if (ChosenNumbers[0] == ChosenNumbers[1] || ChosenNumbers[2] == ChosenNumbers[1] || ChosenNumbers[0] == ChosenNumbers[2])
             {
-                await ReplyAsync(response);
-                rowsAffected = DBCommands.payMoney(Context.User.Id, amount, Context.Guild.Id);
-                await ReplyAsync("2 matches! You win " + amount + " Bits, bringing your balance to " + (long.Parse(balanceString) + amount) + "Bits!");
+                await ReplyAsync(Response);
+                RowsAffected = DBCommands.PayMoney(Context.User.Id, amount, Context.Guild.Id);
+                await ReplyAsync("2 matches! You win " + amount + " Bits, bringing your balance to " + (long.Parse(BalanceString) + amount) + "Bits!");
                 return;
             }
             else
             {
-                await ReplyAsync(response);
-                rowsAffected = DBCommands.payMoney(Context.User.Id, -amount, Context.Guild.Id);
-                await ReplyAsync("Whoops, you lost " + amount + "Bits, bringing your balance to " + (long.Parse(balanceString) - amount) + "Bits!");
+                await ReplyAsync(Response);
+                RowsAffected = DBCommands.PayMoney(Context.User.Id, -amount, Context.Guild.Id);
+                await ReplyAsync("Whoops, you lost " + amount + "Bits, bringing your balance to " + (long.Parse(BalanceString) - amount) + "Bits!");
             }
         }
 
-       
 
-        }
+
+    }
 }

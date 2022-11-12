@@ -26,4 +26,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\javie\source\repos\254DiscordBot\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\javie\source\repos\254DiscordBot\.editorconfig" />
+  </ItemGroup>
+
 </Project>

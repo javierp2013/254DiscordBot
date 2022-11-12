@@ -1,10 +1,10 @@
-﻿using Discord;
+﻿using System;
+using System.Reflection;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace _254DiscordBot.Services
 {
@@ -44,7 +44,7 @@ namespace _254DiscordBot.Services
             // This value holds the offset where the prefix ends
             var argPos = 0;
             // Perform prefix check. You may want to replace this with
-            if(!message.HasCharPrefix('!', ref argPos))
+            if (!message.HasCharPrefix('!', ref argPos))
                 return;
 
             var context = new SocketCommandContext(_discord, message);
@@ -69,5 +69,5 @@ namespace _254DiscordBot.Services
             // the command failed, let's notify the user that something happened.
             await context.Channel.SendMessageAsync($"error: {result}");
         }
-}
+    }
 }
