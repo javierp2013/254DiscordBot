@@ -1,13 +1,12 @@
-﻿
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using _254DiscordBot.Services;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace _254DiscordBot
 {
@@ -20,17 +19,12 @@ namespace _254DiscordBot
 
         public async Task MainAsync()
         {
-            // You should dispose a service provider created using ASP.NET
-            // when you are finished using it, at the end of your app's lifetime.
-            // If you use another dependency injection framework, you should inspect
-            // its documentation for the best way to do this.
             using (var services = ConfigureServices())
             {
                 var client = services.GetRequiredService<DiscordSocketClient>();
-
                 client.Log += LogAsync;
-                client.ReactionRemoved += Client_ReactionRemoved;
-                client.ReactionAdded += Client_ReactionAdded;
+                client.ReactionRemoved += ClientReactionRemoved;
+                client.ReactionAdded += ClientReactionAdded;
                 services.GetRequiredService<CommandService>().Log += LogAsync;
 
                 // Tokens should be considered secret data and never hard-coded.
@@ -46,10 +40,10 @@ namespace _254DiscordBot
             }
         }
 
-        private async Task Client_ReactionAdded(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
+        private async Task ClientReactionAdded(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
         {
             //for role adding through reactions!
-            ulong reactionRole = DBCommands.reactionRoleExists(reaction.MessageId, reaction.Emote.ToString());
+            ulong reactionRole = DBCommands.ReactionRoleExists(reaction.MessageId, reaction.Emote.ToString());
             if (reactionRole != 0)
             {
                 var message = await cache.DownloadAsync();
@@ -70,10 +64,10 @@ namespace _254DiscordBot
             }
         }
 
-        private async Task Client_ReactionRemoved(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> chan, SocketReaction reaction)
+        private async Task ClientReactionRemoved(Cacheable<IUserMessage, ulong> cache, Cacheable<IMessageChannel, ulong> chan, SocketReaction reaction)
         {
             //for role removal after user unclicks a reaction.
-            ulong reactionRole = DBCommands.reactionRoleExists(reaction.MessageId, reaction.Emote.ToString());
+            ulong reactionRole = DBCommands.ReactionRoleExists(reaction.MessageId, reaction.Emote.ToString());
             if (reactionRole != 0)
             {
                 var message = await cache.DownloadAsync();

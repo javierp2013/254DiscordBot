@@ -11,56 +11,56 @@ namespace _254DiscordBot
     {
         public class Image
         {
-            public int id { get; set; }
-            public DateTime created_at { get; set; }
-            public int uploader_id { get; set; }
-            public int score { get; set; }
-            public string source { get; set; }
-            public string md5 { get; set; }
-            public DateTime? last_comment_bumped_at { get; set; }
-            public string rating { get; set; }
-            public int image_width { get; set; }
-            public int image_height { get; set; }
-            public string tag_string { get; set; }
-            public bool is_note_locked { get; set; }
-            public int fav_count { get; set; }
-            public string file_ext { get; set; }
-            public DateTime? last_noted_at { get; set; }
-            public bool is_rating_locked { get; set; }
-            public int? parent_id { get; set; }
-            public bool has_children { get; set; }
-            public int? approver_id { get; set; }
-            public int tag_count_general { get; set; }
-            public int tag_count_artist { get; set; }
-            public int tag_count_character { get; set; }
-            public int tag_count_copyright { get; set; }
-            public int file_size { get; set; }
-            public bool is_status_locked { get; set; }
-            public string pool_string { get; set; }
-            public int up_score { get; set; }
-            public int down_score { get; set; }
-            public bool is_pending { get; set; }
-            public bool is_flagged { get; set; }
-            public bool is_deleted { get; set; }
-            public int tag_count { get; set; }
-            public DateTime updated_at { get; set; }
-            public bool is_banned { get; set; }
-            public int? pixiv_id { get; set; }
-            public DateTime? last_commented_at { get; set; }
-            public bool has_active_children { get; set; }
-            public int bit_flags { get; set; }
-            public int tag_count_meta { get; set; }
-            public bool? has_large { get; set; }
-            public bool has_visible_children { get; set; }
-            public bool is_favorited { get; set; }
-            public string tag_string_general { get; set; }
-            public string tag_string_character { get; set; }
-            public string tag_string_copyright { get; set; }
-            public string tag_string_artist { get; set; }
-            public string tag_string_meta { get; set; }
-            public string file_url { get; set; }
-            public string large_file_url { get; set; }
-            public string preview_file_url { get; set; }
+            public int Id { get; set; }
+            public DateTime Created_at { get; set; }
+            public int Uploader_id { get; set; }
+            public int Score { get; set; }
+            public string Source { get; set; }
+            public string MD5 { get; set; }
+            public DateTime? Last_Comment_Bumped_At { get; set; }
+            public string Rating { get; set; }
+            public int Image_width { get; set; }
+            public int Image_height { get; set; }
+            public string Tag_String { get; set; }
+            public bool Is_Note_Locked { get; set; }
+            public int Fav_Count { get; set; }
+            public string File_Ext { get; set; }
+            public DateTime? Last_Noted_At { get; set; }
+            public bool Is_Rating_Locked { get; set; }
+            public int? Parent_Id { get; set; }
+            public bool Has_Children { get; set; }
+            public int? Approver_Id { get; set; }
+            public int Tag_Count_General { get; set; }
+            public int Tag_Count_Artist { get; set; }
+            public int Tag_Count_Character { get; set; }
+            public int Tag_Count_Copyright { get; set; }
+            public int File_Size { get; set; }
+            public bool Is_Status_Locked { get; set; }
+            public string Pool_String { get; set; }
+            public int Up_Score { get; set; }
+            public int Down_Score { get; set; }
+            public bool Is_Pending { get; set; }
+            public bool Is_Flagged { get; set; }
+            public bool Is_Deleted { get; set; }
+            public int Tag_Count { get; set; }
+            public DateTime Updated_At { get; set; }
+            public bool Is_Banned { get; set; }
+            public int? Pixiv_Id { get; set; }
+            public DateTime? Last_Commented_At { get; set; }
+            public bool Has_Active_Children { get; set; }
+            public int Bit_Flags { get; set; }
+            public int Tag_Count_Meta { get; set; }
+            public bool? Has_Large { get; set; }
+            public bool Has_Visible_Children { get; set; }
+            public bool Is_Favorited { get; set; }
+            public string Tag_String_General { get; set; }
+            public string Tag_String_Character { get; set; }
+            public string Tag_String_Copyright { get; set; }
+            public string Tag_String_Artist { get; set; }
+            public string Tag_String_meta { get; set; }
+            public string File_Url { get; set; }
+            public string Large_File_Url { get; set; }
+            public string Preview_File_Url { get; set; }
 
         }
 
@@ -69,35 +69,35 @@ namespace _254DiscordBot
             public List<Image> ImageList { get; set; }
 
         }
-        public static async Task<string> getJSON(string url)
+        public static async Task<string> GetJSON(string url)
         {
-            using (HttpClient client = new HttpClient())
+            using (HttpClient Client = new HttpClient())
             {
                 //userAgent info
-                string info = "TuffyBot/1.0 (by Javier)";
-                string type = "application/json";
-                client.BaseAddress = new Uri(url);
+                string Info = "TuffyBot/1.0 (by Javier)";
+                string Type = "application/json";
+                Client.BaseAddress = new Uri(url);
 
                 //random client things, not super sure if all of it is needed apart from UserAgent stuff.
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.UserAgent.Clear();
+                Client.DefaultRequestHeaders.Accept.Clear();
+                Client.DefaultRequestHeaders.UserAgent.Clear();
                 //important useragent things, not allowed through without this
-                client.DefaultRequestHeaders.UserAgent.ParseAdd(info);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(type));
-                HttpResponseMessage response = await client.GetAsync(String.Empty);
+                Client.DefaultRequestHeaders.UserAgent.ParseAdd(Info);
+                Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(Type));
+                HttpResponseMessage Response = await Client.GetAsync(String.Empty);
 
-                if (response.IsSuccessStatusCode)
+                if (Response.IsSuccessStatusCode)
                 {
-                    string result = await response.Content.ReadAsStringAsync();
-                    if (result.Contains("The database timed out running your query"))
+                    string Result = await Response.Content.ReadAsStringAsync();
+                    if (Result.Contains("The database timed out running your query"))
                     {
                         return "failure";
                     }
-                    return result;
+                    return Result;
                 }
                 else
                 {
-                    Console.WriteLine(response.StatusCode);
+                    Console.WriteLine(Response.StatusCode);
                     return "failure";
                 }
             }

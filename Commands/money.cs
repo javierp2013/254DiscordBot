@@ -1,10 +1,10 @@
-﻿using Discord.Commands;
-using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Commands;
+using Discord.WebSocket;
 
 namespace _254DiscordBot.Commands
 {
@@ -19,38 +19,38 @@ namespace _254DiscordBot.Commands
                 await ReplyAsync("Please run this command within the server of your choice!");
                 return;
             }
-            string timestamp = DBCommands.getMoneyTimeStamp(Context.User.Id, Context.Guild.Id);
-            DateTime localDate = DateTime.Now;
-            string dateString = localDate.ToString("yyyy-MM-dd.HH:mm:ss");
+            string Timestamp = DBCommands.GetMoneyTimeStamp(Context.User.Id, Context.Guild.Id);
+            DateTime LocalDate = DateTime.Now;
+            string DateString = LocalDate.ToString("yyyy-MM-dd.HH:mm:ss");
             //if there is no record of this user, insert into the table!
-            if (timestamp == "NONE")
+            if (Timestamp == "NONE")
             {
-                DBCommands.addUsertoMoney(Context.User.Id, 250, Context.Guild.Id, dateString);
+                DBCommands.AddUsertoMoney(Context.User.Id, 250, Context.Guild.Id, DateString);
                 await ReplyAsync("Youve joined the rat race with a grant of 250 Bits! Come back every 8 hours for more!");
                 return;
             }
             //figure out how long its been since the last ~daily
-            DateTime stamp = DateTime.ParseExact(timestamp, "yyyy-MM-dd.HH:mm:ss", CultureInfo.InvariantCulture);
-            TimeSpan span = localDate - stamp;
+            DateTime Stamp = DateTime.ParseExact(Timestamp, "yyyy-MM-dd.HH:mm:ss", CultureInfo.InvariantCulture);
+            TimeSpan Span = LocalDate - Stamp;
 
-            if (span.TotalHours > 1)
+            if (Span.TotalHours > 1)
             {
-                DBCommands.giveMoney(Context.User.Id, 100, Context.Guild.Id, dateString);
-                string bal = DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id);
-                await ReplyAsync("Congrats youve been gifted 100 Bits, your new balance is " + bal);
+                DBCommands.GiveMoney(Context.User.Id, 100, Context.Guild.Id, DateString);
+                string Bal = DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id);
+                await ReplyAsync("Congrats youve been gifted 100 Bits, your new balance is " + Bal);
             }
             else
             {
-                double remaining = Math.Round(60 - span.TotalMinutes);
-                if (remaining < 61)
+                double Remaining = Math.Round(60 - Span.TotalMinutes);
+                if (Remaining < 61)
                 {
-                    await ReplyAsync("Sorry, wait " + remaining.ToString() + " Minutes!");
+                    await ReplyAsync("Sorry, wait " + Remaining.ToString() + " Minutes!");
                 }
                 else
                 {
-                    int hours = (int)remaining / 60;
-                    int mins = (int)remaining % 60;
-                    await ReplyAsync("Sorry, wait " + hours + " hours, " + mins + " minutes for your next bonus!");
+                    int Hours = (int)Remaining / 60;
+                    int Mins = (int)Remaining % 60;
+                    await ReplyAsync("Sorry, wait " + Hours + " hours, " + Mins + " minutes for your next bonus!");
                 }
 
             }
@@ -63,18 +63,18 @@ namespace _254DiscordBot.Commands
         {
             if (Context.IsPrivate)
             {
-                string response = DBCommands.getMoneyBalanceDMs(Context.User.Id);
-                await ReplyAsync(response);
+                string Response = DBCommands.GetMoneyBalanceDMs(Context.User.Id);
+                await ReplyAsync(Response);
                 return;
             }
-            string bal = DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id);
-            if (bal == "NONE")
+            string Bal = DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id);
+            if (Bal == "NONE")
             {
                 await ReplyAsync("You are poor and destitute, not a cent to your name! Use ~bonus to beg for some.");
             }
             else
             {
-                await ReplyAsync(bal + " Bits!");
+                await ReplyAsync(Bal + " Bits!");
             }
         }
         [Command("balance")]
@@ -83,18 +83,18 @@ namespace _254DiscordBot.Commands
         {
             if (Context.IsPrivate)
             {
-                string response = DBCommands.getMoneyBalanceDMs(user.Id);
-                await ReplyAsync(response);
+                string Response = DBCommands.GetMoneyBalanceDMs(user.Id);
+                await ReplyAsync(Response);
                 return;
             }
-            string bal = DBCommands.getMoneyBalance(user.Id, Context.Guild.Id);
-            if (bal == "NONE")
+            string Bal = DBCommands.GetMoneyBalance(user.Id, Context.Guild.Id);
+            if (Bal == "NONE")
             {
                 await ReplyAsync("They are poor and destitute, not a cent to their name! Consider gifting them some cash, or paying them with ~pay!");
             }
             else
             {
-                await ReplyAsync(bal + " Bits!");
+                await ReplyAsync(Bal + " Bits!");
             }
         }
 
@@ -107,29 +107,29 @@ namespace _254DiscordBot.Commands
                 await ReplyAsync("Sorry, this command is for server use only.");
                 return;
             }
-            string leaderString = DBCommands.getMoneyLeaders(Context.Guild.Id);
+            string LeaderString = DBCommands.GetMoneyLeaders(Context.Guild.Id);
 
-            await ReplyAsync(leaderString);
+            await ReplyAsync(LeaderString);
         }
 
         [Command("pay")]
         public async Task PayAsync(SocketGuildUser user, long amount)
         {
-            string balanceString = DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id);
-            if (balanceString == "NONE")
+            string BalanceString = DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id);
+            if (BalanceString == "NONE")
             {
                 return;
             }
-            long senderBal = long.Parse(balanceString);
-            if (amount > senderBal || amount <= 0)
+            long SenderBal = long.Parse(BalanceString);
+            if (amount > SenderBal || amount <= 0)
             {
-                await ReplyAsync("Sorry, your balance of " + senderBal + " Bits is too low!");
+                await ReplyAsync("Sorry, your balance of " + SenderBal + " Bits is too low!");
                 return;
             }
-            if (DBCommands.payMoney(user.Id, amount, Context.Guild.Id) == 1)
+            if (DBCommands.PayMoney(user.Id, amount, Context.Guild.Id) == 1)
             {
-                DBCommands.payMoney(Context.User.Id, -amount, Context.Guild.Id);
-                await ReplyAsync("Payment succesful! Your balance is now " + (senderBal - amount) + " Bits!");
+                DBCommands.PayMoney(Context.User.Id, -amount, Context.Guild.Id);
+                await ReplyAsync("Payment succesful! Your balance is now " + (SenderBal - amount) + " Bits!");
             }
         }
     }

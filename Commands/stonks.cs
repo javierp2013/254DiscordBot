@@ -1,16 +1,16 @@
-﻿using Discord.Commands;
-using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Commands;
+using Discord.WebSocket;
 
 namespace _254DiscordBot.Commands
 {
     public class stonks : ModuleBase<SocketCommandContext>
     {
         [Command("addstonk")]
-        public async Task addStonk(string name, int numOfShares, int price)
+        public async Task AddStonk(string name, int numOfShares, int price)
         {
             if (Context.User.Id != 223651215337193472)
             {
@@ -18,13 +18,13 @@ namespace _254DiscordBot.Commands
             }
             else
             {
-                DBCommands.addStonk(name, numOfShares, price, Context.Guild.Id);
+                DBCommands.AddStonk(name, numOfShares, price, Context.Guild.Id);
                 await ReplyAsync($"Added ``{name}`` stonk!");
             }
 
         }
         [Command("editstonk shares")]
-        public async Task editStonkshares(string name, int numOfShares)
+        public async Task EditStonkshares(string name, int numOfShares)
         {
             if (Context.User.Id != 223651215337193472)
             {
@@ -32,13 +32,13 @@ namespace _254DiscordBot.Commands
             }
             else
             {
-                DBCommands.editStonkShares(name, numOfShares);
+                DBCommands.EditStonkShares(name, numOfShares);
                 await ReplyAsync($"Edited ``{name}`` stonk!");
             }
 
         }
         [Command("editstonk price")]
-        public async Task editStonkprice(string name, int price)
+        public async Task EditStonkprice(string name, int price)
         {
             if (Context.User.Id != 223651215337193472)
             {
@@ -46,73 +46,73 @@ namespace _254DiscordBot.Commands
             }
             else
             {
-                DBCommands.editStonkPrice(name, price, Context.Guild.Id);
+                DBCommands.EditStonkPrice(name, price, Context.Guild.Id);
                 await ReplyAsync($"Edited ``{name}`` stonk!");
             }
 
         }
 
         [Command("stonks")]
-        public async Task postStonk()
+        public async Task PostStonk()
         {
-            await ReplyAsync(DBCommands.getStonks(Context.Guild.Id));
+            await ReplyAsync(DBCommands.GetStonks(Context.Guild.Id));
         }
 
         [Command("mystonks")]
-        public async Task myStonks()
+        public async Task MyStonks()
         {
-            await ReplyAsync(DBCommands.getOwnedStonks(Context.User.Id, Context.Guild.Id));
+            await ReplyAsync(DBCommands.GetOwnedStonks(Context.User.Id, Context.Guild.Id));
         }
 
 
         [Command("buystonk")]
-        public async Task buyStonk(string stonk, int amount)
+        public async Task BuyStonk(string stonk, int amount)
         {
             stonk = stonk.ToUpper();
             //0 = MaxNumOfShares
             //1 = stonkPrice
             //2 = OwnedShares
-            List<int> stonkInfo = DBCommands.getMaxShares(stonk, Context.Guild.Id);
-            long balance = long.Parse(DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id));
+            List<int> StonkInfo = DBCommands.GetMaxShares(stonk, Context.Guild.Id);
+            long Balance = long.Parse(DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id));
 
-            if (stonkInfo.Count == 0)
+            if (StonkInfo.Count == 0)
             {
                 await ReplyAsync("Sorry, there is no stock with that name on the market right now!");
             }
-            else if (stonkInfo[2] + amount > stonkInfo[0])
+            else if (StonkInfo[2] + amount > StonkInfo[0])
             {
                 await ReplyAsync("Sorry! Not enough stonks to complete your purchase!");
             }
-            else if (stonkInfo[1] * amount > balance)
+            else if (StonkInfo[1] * amount > Balance)
             {
-                await ReplyAsync("Sorry! You don't have enough Bits for this. The price for " + amount + " shares of this stonk is " + stonkInfo[1] * amount);
+                await ReplyAsync("Sorry! You don't have enough Bits for this. The price for " + amount + " shares of this stonk is " + StonkInfo[1] * amount);
             }
             else
             {
-                DateTime localDate = DateTime.Now;
-                string dateString = localDate.ToString("yyyy-MM-dd.HH:mm:ss");
-                DBCommands.addStonkPurchase(stonk, amount, Context.User.Id, Context.Guild.Id, dateString);
-                long totalPrice = stonkInfo[1] * amount;
-                DBCommands.payMoney(Context.User.Id, -totalPrice, Context.Guild.Id);
-                await ReplyAsync("Stonks purchased! Your new balance is " + (balance - (stonkInfo[1] * amount)) + " Bits!");
+                DateTime LocalDate = DateTime.Now;
+                string DateString = LocalDate.ToString("yyyy-MM-dd.HH:mm:ss");
+                DBCommands.AddStonkPurchase(stonk, amount, Context.User.Id, Context.Guild.Id, DateString);
+                long TotalPrice = StonkInfo[1] * amount;
+                DBCommands.PayMoney(Context.User.Id, -TotalPrice, Context.Guild.Id);
+                await ReplyAsync("Stonks purchased! Your new balance is " + (Balance - (StonkInfo[1] * amount)) + " Bits!");
             }
 
         }
 
         [Command("sellstonk")]
-        public async Task sellStonk(string name, int amount)
+        public async Task SellStonk(string name, int amount)
         {
             name = name.ToUpper();
             //1 = name, 2 = numOfShares, 3 = price
-            List<string> stonkInfo = DBCommands.getStonkInfo(name);
-            Console.WriteLine(stonkInfo[0] + " " + stonkInfo[1] + " " + stonkInfo[2]);
-            long balance = long.Parse(DBCommands.getMoneyBalance(Context.User.Id, Context.Guild.Id));
-            bool enoughStonks = DBCommands.hasEnoughStonk(Context.User.Id, Context.Guild.Id, name, amount);
-            if (enoughStonks)
+            List<string> StonkInfo = DBCommands.GetStonkInfo(name);
+            Console.WriteLine(StonkInfo[0] + " " + StonkInfo[1] + " " + StonkInfo[2]);
+            long Balance = long.Parse(DBCommands.GetMoneyBalance(Context.User.Id, Context.Guild.Id));
+            bool HasEnoughStonks = DBCommands.HasEnoughStonk(Context.User.Id, Context.Guild.Id, name, amount);
+            if (HasEnoughStonks)
             {
-                DBCommands.sellStonk(Context.User.Id, Context.Guild.Id, name, amount);
-                DBCommands.payMoney(Context.User.Id, amount * int.Parse(stonkInfo[2]), Context.Guild.Id);
-                await ReplyAsync("Your stonks were sold and you made " + amount * int.Parse(stonkInfo[2]) + " bits!");
+                DBCommands.SellStonk(Context.User.Id, Context.Guild.Id, name, amount);
+                DBCommands.PayMoney(Context.User.Id, amount * int.Parse(StonkInfo[2]), Context.Guild.Id);
+                await ReplyAsync("Your stonks were sold and you made " + amount * int.Parse(StonkInfo[2]) + " bits!");
             }
             else
             {
@@ -121,9 +121,9 @@ namespace _254DiscordBot.Commands
         }
 
         [Command("stonksetup")]
-        public async Task stonkSetup(SocketGuildChannel channel)
+        public async Task StonkSetup(SocketGuildChannel channel)
         {
-            DBCommands.stonkConfigSetup(channel.Guild.Id, channel.Id);
+            DBCommands.StonkConfigSetup(channel.Guild.Id, channel.Id);
             await ReplyAsync("Added " + channel.Name + " as the channel for all stonk updates!");
         }
     }

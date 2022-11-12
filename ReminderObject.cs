@@ -6,18 +6,18 @@ namespace _254DiscordBot
 {
     public class ReminderObject
     {
-        public string timeAdded;
-        public string title;
-        public int timeInterval;
-        public ulong userID;
-        public ulong serverID;
+        public string TimeAdded;
+        public string Title;
+        public int TimeInterval;
+        public ulong UserID;
+        public ulong ServerID;
         public ReminderObject(string _timeAdded, string _title, int _timeInterval, ulong _userID, ulong _serverID)
         {
-            timeAdded = _timeAdded;
-            title = _title;
-            timeInterval = _timeInterval;
-            userID = _userID;
-            serverID = _serverID;
+            TimeAdded = _timeAdded;
+            Title = _title;
+            TimeInterval = _timeInterval;
+            UserID = _userID;
+            ServerID = _serverID;
         }
     }
 }
