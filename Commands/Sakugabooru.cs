@@ -28,10 +28,10 @@ namespace _254DiscordBot.Commands
                 await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");
             else
             {
-                Global.SakugaBooruSearches[Context.Channel.Id] = Response;
+                Global.s_SakugaBooruSearches[Context.Channel.Id] = Response;
                 Random Rand = new Random();
-                Global.SakugaSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
-                SakugaBooruResponse ChosenImage = ResponseList[Global.SakugaSearchIndex[Context.Channel.Id]];
+                Global.s_SakugaSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
+                SakugaBooruResponse ChosenImage = ResponseList[Global.s_SakugaSearchIndex[Context.Channel.Id]];
                 int LoopCounter = 0;
                 while (ChosenImage.File_Url == null)
                 {
@@ -41,8 +41,8 @@ namespace _254DiscordBot.Commands
                         await ReplyAsync("No returned images had valid links, you may have searched a hidden tag such as loli. Make a new search.");
                         return;
                     }
-                    Global.SakugaSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
-                    ChosenImage = ResponseList[Global.SakugaSearchIndex[Context.Channel.Id]];
+                    Global.s_SakugaSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
+                    ChosenImage = ResponseList[Global.s_SakugaSearchIndex[Context.Channel.Id]];
                 }
 
                 await ReplyAsync(ChosenImage.File_Url);
@@ -55,16 +55,16 @@ namespace _254DiscordBot.Commands
         public async Task SakugaBooruNext()
         {
             await Context.Channel.TriggerTypingAsync();
-            if (Global.SakugaBooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_SakugaBooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.SakugaBooruSearches[Context.Channel.Id]);
-                if (ResponseList.Count - 1 == Global.SakugaSearchIndex[Context.Channel.Id])
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_SakugaBooruSearches[Context.Channel.Id]);
+                if (ResponseList.Count - 1 == Global.s_SakugaSearchIndex[Context.Channel.Id])
                 {
                     if (ResponseList.Count == 2)
                     {
                         await ReplyAsync("Only 2 results in this search!\n" + ResponseList[0].File_Url);
                     }
-                    Global.SakugaSearchIndex[Context.Channel.Id] = 0;
+                    Global.s_SakugaSearchIndex[Context.Channel.Id] = 0;
                 }
                 if (ResponseList.Count == 0)
                 {
@@ -79,8 +79,8 @@ namespace _254DiscordBot.Commands
                 //counter to keep track of how many times the While loop goes, make sure it doesnt keep loopinging in on itself
                 int LoopCounter = 0;
                 //increment counter by 1
-                Global.SakugaSearchIndex[Context.Channel.Id]++;
-                while (ResponseList.ElementAt(Global.SakugaSearchIndex[Context.Channel.Id]).File_Url == null)
+                Global.s_SakugaSearchIndex[Context.Channel.Id]++;
+                while (ResponseList.ElementAt(Global.s_SakugaSearchIndex[Context.Channel.Id]).File_Url == null)
                 {
                     LoopCounter++;
                     if (LoopCounter > ResponseList.Count)
@@ -88,7 +88,7 @@ namespace _254DiscordBot.Commands
                         await ReplyAsync("No returned images had valid links, you may have searched a hidden tag such as loli. Make a new search.");
                         return;
                     }
-                    if (Global.SakugaSearchIndex[Context.Channel.Id] + 1 == ResponseList.Count)
+                    if (Global.s_SakugaSearchIndex[Context.Channel.Id] + 1 == ResponseList.Count)
                     {
                         //if there are only 2 results, this glitches and only shows the second image, this will catch that edge case and spit them both out. 
                         if (ResponseList.Count == 2)
@@ -97,14 +97,14 @@ namespace _254DiscordBot.Commands
                                 + "\n" + ResponseList[0].File_Url);
                             return;
                         }
-                        Global.SakugaSearchIndex[Context.Channel.Id] = 0;
+                        Global.s_SakugaSearchIndex[Context.Channel.Id] = 0;
                     }
                     else
                     {
-                        Global.SakugaSearchIndex[Context.Channel.Id]++;
+                        Global.s_SakugaSearchIndex[Context.Channel.Id]++;
                     }
                 }
-                await ReplyAsync(ResponseList[Global.SakugaSearchIndex[Context.Channel.Id]].File_Url);
+                await ReplyAsync(ResponseList[Global.s_SakugaSearchIndex[Context.Channel.Id]].File_Url);
             }
             else
             {
@@ -125,9 +125,9 @@ namespace _254DiscordBot.Commands
                 return;
             }
             //if dictionary has an entry for channel, proceed
-            if (Global.SakugaBooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_SakugaBooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList responseList = JsonConvert.DeserializeObject<ImageList>(Global.SakugaBooruSearches[Context.Channel.Id]);
+                ImageList responseList = JsonConvert.DeserializeObject<ImageList>(Global.s_SakugaBooruSearches[Context.Channel.Id]);
                 if (responseList.Count == 0)
                 {
                     await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");
@@ -138,10 +138,10 @@ namespace _254DiscordBot.Commands
                     await ReplyAsync("Only one result to show! \n" + responseList.ElementAt(0));
                     return;
                 }
-                else if (responseList.Count - 1 < (Global.SakugaSearchIndex[Context.Channel.Id] + amount))
+                else if (responseList.Count - 1 < (Global.s_SakugaSearchIndex[Context.Channel.Id] + amount))
                 {
                     await ReplyAsync("Reached end of results, resetting index. Use ~dnext to start again.");
-                    Global.SakugaSearchIndex[Context.Channel.Id] = 0;
+                    Global.s_SakugaSearchIndex[Context.Channel.Id] = 0;
                     return;
                 }
                 //if all fail, proceed!
@@ -152,17 +152,17 @@ namespace _254DiscordBot.Commands
                     //loop through user provided amount
                     for (int counter = 0; counter < amount; counter++)
                     {
-                        if (responseList.Count < Global.SakugaSearchIndex[Context.Channel.Id] + 1)
+                        if (responseList.Count < Global.s_SakugaSearchIndex[Context.Channel.Id] + 1)
                         {
                             await ReplyAsync("Reached end of results, resetting index. Use ~dnext to start again.");
-                            Global.SakugaSearchIndex[Context.Channel.Id] = 0;
+                            Global.s_SakugaSearchIndex[Context.Channel.Id] = 0;
                         }
                         //if everythings fine, increase index by 1
                         else
                         {
-                            Global.SakugaSearchIndex[Context.Channel.Id]++;
+                            Global.s_SakugaSearchIndex[Context.Channel.Id]++;
                         }
-                        while (responseList.ElementAt(Global.SakugaSearchIndex[Context.Channel.Id]).File_Url == null)
+                        while (responseList.ElementAt(Global.s_SakugaSearchIndex[Context.Channel.Id]).File_Url == null)
                         {
                             LoopCounter++;
                             if (LoopCounter > responseList.Count)
@@ -170,16 +170,16 @@ namespace _254DiscordBot.Commands
                                 await ReplyAsync("No returned images had valid links, you may have searched a hidden tag such as loli. Make a new search.");
                                 return;
                             }
-                            if (Global.SakugaSearchIndex[Context.Channel.Id] + 1 == responseList.Count)
+                            if (Global.s_SakugaSearchIndex[Context.Channel.Id] + 1 == responseList.Count)
                             {
-                                Global.SakugaSearchIndex[Context.Channel.Id] = 0;
+                                Global.s_SakugaSearchIndex[Context.Channel.Id] = 0;
                             }
                             else
                             {
-                                Global.SakugaSearchIndex[Context.Channel.Id]++;
+                                Global.s_SakugaSearchIndex[Context.Channel.Id]++;
                             }
                         }
-                        Response = Response + responseList[Global.SakugaSearchIndex[Context.Channel.Id]].File_Url + "\n";
+                        Response = Response + responseList[Global.s_SakugaSearchIndex[Context.Channel.Id]].File_Url + "\n";
                     }
                 }
 
@@ -195,10 +195,10 @@ namespace _254DiscordBot.Commands
         public async Task SakugaBooruTags()
         {
             await Context.Channel.TriggerTypingAsync();
-            if (Global.SakugaBooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_SakugaBooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.SakugaBooruSearches[Context.Channel.Id]);
-                SakugaBooruResponse Chosen = ResponseList.ElementAt(Global.SakugaSearchIndex[Context.Channel.Id]);
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_SakugaBooruSearches[Context.Channel.Id]);
+                SakugaBooruResponse Chosen = ResponseList.ElementAt(Global.s_SakugaSearchIndex[Context.Channel.Id]);
                 if (ResponseList.Count == 0)
                 {
                     await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");
