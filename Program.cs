@@ -43,7 +43,6 @@ namespace _254DiscordBot
                 //this is the actual function that runs when the time runs out
                 aTimer.Elapsed += async (object sender, ElapsedEventArgs e) =>
                 {
-                    Console.WriteLine("cjedk!");
                     //get all reminders!
                     List<ReminderObject> listOfReminders = DBCommands.GetReminders();
 
