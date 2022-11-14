@@ -27,10 +27,10 @@ namespace _254DiscordBot.Commands
                 await ReplyAsync("No results! The tag may be misspelled.");
             else
             {
-                Global.SafeBooruSearches[Context.Channel.Id] = Respond;
+                Global.s_SafeBooruSearches[Context.Channel.Id] = Respond;
                 Random Rand = new Random();
-                Global.SafebooruSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
-                SafeBooruUtil.SafeOBJ ChosenImage = ResponseList[Global.SafebooruSearchIndex[Context.Channel.Id]];
+                Global.s_SafebooruSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
+                SafeBooruUtil.SafeOBJ ChosenImage = ResponseList[Global.s_SafebooruSearchIndex[Context.Channel.Id]];
                 string imgLink = $"https://safebooru.org//images/{ChosenImage.Directory}/{ChosenImage.Image}";
                 await Context.Channel.SendMessageAsync(imgLink);
             }
@@ -40,12 +40,12 @@ namespace _254DiscordBot.Commands
         public async Task SafeNext()
         {
             await Context.Channel.TriggerTypingAsync();
-            if (Global.SafeBooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_SafeBooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.SafeBooruSearches[Context.Channel.Id]);
-                if (ResponseList.Count - 1 == Global.SafebooruSearchIndex[Context.Channel.Id])
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_SafeBooruSearches[Context.Channel.Id]);
+                if (ResponseList.Count - 1 == Global.s_SafebooruSearchIndex[Context.Channel.Id])
                 {
-                    Global.SafebooruSearchIndex[Context.Channel.Id] = 0;
+                    Global.s_SafebooruSearchIndex[Context.Channel.Id] = 0;
                 }
                 if (ResponseList.Count == 0)
                 {
@@ -57,8 +57,8 @@ namespace _254DiscordBot.Commands
                     await ReplyAsync("Only one result to show!");
                     return;
                 }
-                Global.SafebooruSearchIndex[Context.Channel.Id]++;
-                SafeBooruUtil.SafeOBJ ChosenImage = ResponseList.ElementAt(Global.SafebooruSearchIndex[Context.Channel.Id]);
+                Global.s_SafebooruSearchIndex[Context.Channel.Id]++;
+                SafeBooruUtil.SafeOBJ ChosenImage = ResponseList.ElementAt(Global.s_SafebooruSearchIndex[Context.Channel.Id]);
                 string ImgLink = $"https://safebooru.org//images/{ChosenImage.Directory}/{ChosenImage.Image}";
                 await Context.Channel.SendMessageAsync(ImgLink);
             }
@@ -73,10 +73,10 @@ namespace _254DiscordBot.Commands
         public async Task SafeTags()
         {
             await Context.Channel.TriggerTypingAsync();
-            if (Global.SafeBooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_SafeBooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.SafeBooruSearches[Context.Channel.Id]);
-                SafeBooruUtil.SafeOBJ Chosen = ResponseList.ElementAt(Global.SafebooruSearchIndex[Context.Channel.Id]);
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_SafeBooruSearches[Context.Channel.Id]);
+                SafeBooruUtil.SafeOBJ Chosen = ResponseList.ElementAt(Global.s_SafebooruSearchIndex[Context.Channel.Id]);
                 if (ResponseList.Count == 0)
                 {
                     await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");

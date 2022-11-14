@@ -28,10 +28,10 @@ namespace _254DiscordBot.Commands
                 await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");
             else
             {
-                Global.DanbooruSearches[Context.Channel.Id] = Response;
+                Global.s_DanbooruSearches[Context.Channel.Id] = Response;
                 Random Rand = new Random();
-                Global.DanbooruSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
-                DanbooruResponse.Image ChosenImage = ResponseList[Global.DanbooruSearchIndex[Context.Channel.Id]];
+                Global.s_DanbooruSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
+                DanbooruResponse.Image ChosenImage = ResponseList[Global.s_DanbooruSearchIndex[Context.Channel.Id]];
                 int loopCounter = 0;
                 while (ChosenImage.File_Url == null)
                 {
@@ -41,8 +41,8 @@ namespace _254DiscordBot.Commands
                         await ReplyAsync("No returned images had valid links, you may have searched a hidden tag such as loli. Make a new search.");
                         return;
                     }
-                    Global.DanbooruSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
-                    ChosenImage = ResponseList[Global.DanbooruSearchIndex[Context.Channel.Id]];
+                    Global.s_DanbooruSearchIndex[Context.Channel.Id] = Rand.Next(0, ResponseList.Count);
+                    ChosenImage = ResponseList[Global.s_DanbooruSearchIndex[Context.Channel.Id]];
                 }
 
                 await ReplyAsync(ChosenImage.File_Url + "\n" + ChosenImage.Tag_String_Artist.Replace(" ", ", "));
@@ -55,16 +55,16 @@ namespace _254DiscordBot.Commands
         public async Task DanbooruNext()
         {
             await Context.Channel.TriggerTypingAsync();
-            if (Global.DanbooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_DanbooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.DanbooruSearches[Context.Channel.Id]);
-                if (ResponseList.Count - 1 == Global.DanbooruSearchIndex[Context.Channel.Id])
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_DanbooruSearches[Context.Channel.Id]);
+                if (ResponseList.Count - 1 == Global.s_DanbooruSearchIndex[Context.Channel.Id])
                 {
                     if (ResponseList.Count == 2)
                     {
                         await ReplyAsync("Only 2 results in this search!\n" + ResponseList[0].File_Url + "\n" + ResponseList[0].Tag_String_Artist);
                     }
-                    Global.DanbooruSearchIndex[Context.Channel.Id] = 0;
+                    Global.s_DanbooruSearchIndex[Context.Channel.Id] = 0;
                 }
                 if (ResponseList.Count == 0)
                 {
@@ -79,8 +79,8 @@ namespace _254DiscordBot.Commands
                 //counter to keep track of how many times the While loop goes, make sure it doesnt keep loopinging in on itself
                 int LoopCounter = 0;
                 //increment counter by 1
-                Global.DanbooruSearchIndex[Context.Channel.Id]++;
-                while (ResponseList.ElementAt(Global.DanbooruSearchIndex[Context.Channel.Id]).File_Url == null)
+                Global.s_DanbooruSearchIndex[Context.Channel.Id]++;
+                while (ResponseList.ElementAt(Global.s_DanbooruSearchIndex[Context.Channel.Id]).File_Url == null)
                 {
                     LoopCounter++;
                     if (LoopCounter > ResponseList.Count)
@@ -88,7 +88,7 @@ namespace _254DiscordBot.Commands
                         await ReplyAsync("No returned images had valid links, you may have searched a hidden tag such as loli. Make a new search.");
                         return;
                     }
-                    if (Global.DanbooruSearchIndex[Context.Channel.Id] + 1 == ResponseList.Count)
+                    if (Global.s_DanbooruSearchIndex[Context.Channel.Id] + 1 == ResponseList.Count)
                     {
                         //if there are only 2 results, this glitches and only shows the second image, this will catch that edge case and spit them both out. 
                         if (ResponseList.Count == 2)
@@ -97,15 +97,15 @@ namespace _254DiscordBot.Commands
                                 + "\n" + ResponseList[0].File_Url + "\n" + ResponseList[0].Tag_String_Artist);
                             return;
                         }
-                        Global.DanbooruSearchIndex[Context.Channel.Id] = 0;
+                        Global.s_DanbooruSearchIndex[Context.Channel.Id] = 0;
                     }
                     else
                     {
-                        Global.DanbooruSearchIndex[Context.Channel.Id]++;
+                        Global.s_DanbooruSearchIndex[Context.Channel.Id]++;
                     }
                 }
-                await ReplyAsync(ResponseList[Global.DanbooruSearchIndex[Context.Channel.Id]].File_Url + "\n"
-                    + ResponseList[Global.DanbooruSearchIndex[Context.Channel.Id]].Tag_String_Artist);
+                await ReplyAsync(ResponseList[Global.s_DanbooruSearchIndex[Context.Channel.Id]].File_Url + "\n"
+                    + ResponseList[Global.s_DanbooruSearchIndex[Context.Channel.Id]].Tag_String_Artist);
             }
             else
             {
@@ -126,9 +126,9 @@ namespace _254DiscordBot.Commands
                 return;
             }
             //if dictionary has an entry for channel, proceed
-            if (Global.DanbooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_DanbooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.DanbooruSearches[Context.Channel.Id]);
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_DanbooruSearches[Context.Channel.Id]);
                 if (ResponseList.Count == 0)
                 {
                     await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");
@@ -139,10 +139,10 @@ namespace _254DiscordBot.Commands
                     await ReplyAsync("Only one result to show! \n" + ResponseList.ElementAt(0));
                     return;
                 }
-                else if (ResponseList.Count - 1 < (Global.DanbooruSearchIndex[Context.Channel.Id] + amount))
+                else if (ResponseList.Count - 1 < (Global.s_DanbooruSearchIndex[Context.Channel.Id] + amount))
                 {
                     await ReplyAsync("Reached end of results, resetting index. Use ~dnext to start again.");
-                    Global.DanbooruSearchIndex[Context.Channel.Id] = 0;
+                    Global.s_DanbooruSearchIndex[Context.Channel.Id] = 0;
                     return;
                 }
                 //if all fail, proceed!
@@ -153,17 +153,17 @@ namespace _254DiscordBot.Commands
                     //loop through user provided amount
                     for (int counter = 0; counter < amount; counter++)
                     {
-                        if (ResponseList.Count < Global.DanbooruSearchIndex[Context.Channel.Id] + 1)
+                        if (ResponseList.Count < Global.s_DanbooruSearchIndex[Context.Channel.Id] + 1)
                         {
                             await ReplyAsync("Reached end of results, resetting index. Use ~dnext to start again.");
-                            Global.DanbooruSearchIndex[Context.Channel.Id] = 0;
+                            Global.s_DanbooruSearchIndex[Context.Channel.Id] = 0;
                         }
                         //if everythings fine, increase index by 1
                         else
                         {
-                            Global.DanbooruSearchIndex[Context.Channel.Id]++;
+                            Global.s_DanbooruSearchIndex[Context.Channel.Id]++;
                         }
-                        while (ResponseList.ElementAt(Global.DanbooruSearchIndex[Context.Channel.Id]).File_Url == null)
+                        while (ResponseList.ElementAt(Global.s_DanbooruSearchIndex[Context.Channel.Id]).File_Url == null)
                         {
                             LoopCounter++;
                             if (LoopCounter > ResponseList.Count)
@@ -171,16 +171,16 @@ namespace _254DiscordBot.Commands
                                 await ReplyAsync("No returned images had valid links, you may have searched a hidden tag such as loli. Make a new search.");
                                 return;
                             }
-                            if (Global.DanbooruSearchIndex[Context.Channel.Id] + 1 == ResponseList.Count)
+                            if (Global.s_DanbooruSearchIndex[Context.Channel.Id] + 1 == ResponseList.Count)
                             {
-                                Global.DanbooruSearchIndex[Context.Channel.Id] = 0;
+                                Global.s_DanbooruSearchIndex[Context.Channel.Id] = 0;
                             }
                             else
                             {
-                                Global.DanbooruSearchIndex[Context.Channel.Id]++;
+                                Global.s_DanbooruSearchIndex[Context.Channel.Id]++;
                             }
                         }
-                        Response = Response + ResponseList[Global.DanbooruSearchIndex[Context.Channel.Id]].File_Url + "\n";
+                        Response = Response + ResponseList[Global.s_DanbooruSearchIndex[Context.Channel.Id]].File_Url + "\n";
                     }
                 }
 
@@ -196,10 +196,10 @@ namespace _254DiscordBot.Commands
         public async Task DanbooruTags()
         {
             await Context.Channel.TriggerTypingAsync();
-            if (Global.DanbooruSearches.ContainsKey(Context.Channel.Id))
+            if (Global.s_DanbooruSearches.ContainsKey(Context.Channel.Id))
             {
-                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.DanbooruSearches[Context.Channel.Id]);
-                DanbooruResponse.Image Chosen = ResponseList.ElementAt(Global.DanbooruSearchIndex[Context.Channel.Id]);
+                ImageList ResponseList = JsonConvert.DeserializeObject<ImageList>(Global.s_DanbooruSearches[Context.Channel.Id]);
+                DanbooruResponse.Image Chosen = ResponseList.ElementAt(Global.s_DanbooruSearchIndex[Context.Channel.Id]);
                 if (ResponseList.Count == 0)
                 {
                     await ReplyAsync("No results! The tag may be misspelled, or the results could be filtered out due to channel!");

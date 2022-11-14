@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using _254DiscordBot.Services;
 using Discord;
 using Discord.Commands;
@@ -35,7 +37,41 @@ namespace _254DiscordBot
 
                 // Here we initialize the logic required to register our commands.
                 await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
+                //here we make a timer and make it wait to trigger every 10 seconds!
+                System.Timers.Timer aTimer = new System.Timers.Timer(10000);
+                System.Timers.Timer Stonktimer = new System.Timers.Timer(3600000);
+                //this is the actual function that runs when the time runs out
+                aTimer.Elapsed += async (object sender, ElapsedEventArgs e) =>
+                {
+                    //get all reminders!
+                    List<ReminderObject> listOfReminders = DBCommands.GetReminders();
 
+                    foreach (ReminderObject item in listOfReminders)
+                    {
+                        DateTime timeAdded = DateTime.Parse(item.TimeAdded);
+                        DateTime now = DateTime.Now;
+                        //get the amount of time passed since the reminder was added!
+                        TimeSpan span = now - timeAdded;
+                        //if enough time has passed to be equal to or greater than the specified time interval, go
+                        if (span.TotalMinutes >= item.TimeInterval)
+                        {
+                            //gets the server, uses that to get the user, and then finally sends the message
+                            try
+                            {
+                                await client.GetGuild(item.ServerID).GetUser(item.UserID).CreateDMChannelAsync().Result.SendMessageAsync(item.Title);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Reminder message failed! User: " + item.UserID + "Server: " + item.ServerID + " Reminder: " + item.Title);
+                            }
+                            DBCommands.RemoveReminder(item.Title, item.ServerID, item.UserID);
+                        }
+                    }
+                };
+                Stonktimer.AutoReset = true;
+                Stonktimer.Enabled = true;
+                aTimer.AutoReset = true;
+                aTimer.Enabled = true;
                 await Task.Delay(Timeout.Infinite);
             }
         }
