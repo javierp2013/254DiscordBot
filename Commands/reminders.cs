@@ -13,11 +13,11 @@ namespace _254DiscordBot.Commands
         [Alias("remind me", "rm", "addreminder")]
         public async Task AddReminderAsync(string title, [Remainder] string interval)
         {
-            string[] arrayOfTime = interval.Split(" ");
+            string[] ArrayOfTime = interval.Split(" ");
             int Time = 0;
             int Hours = 0, mins = 0;
             string Temp = "";
-            foreach (var item in arrayOfTime)
+            foreach (var item in ArrayOfTime)
             {
                 if (!(item.Contains("H") || item.Contains("h") || item.Contains("M") || item.Contains("m")))
                 {
