@@ -8,6 +8,8 @@ using Discord.WebSocket;
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Vincent Nguyen
+    // This class are all the money related commands.
     public class money : ModuleBase<SocketCommandContext>
     {
         [Command("bonus")]

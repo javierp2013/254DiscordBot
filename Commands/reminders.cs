@@ -7,6 +7,8 @@ using Discord.Commands;
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Vincent Nguyen
+    // This class are all the reminder related commands.
     public class reminders : ModuleBase<SocketCommandContext>
     {
         [Command("remindme")]
@@ -68,7 +70,7 @@ namespace _254DiscordBot.Commands
                         //unknown error, spit out an error for me. 69 for obvious reasons.
                         case -1:
                             Console.WriteLine("SQL Error: " + ex.Message + "\nErrorNum:" + ex.ErrorCode);
-                            await ReplyAsync("Something went wrong, contact Hoovier with error code: " + ex.ErrorCode);
+                            await ReplyAsync("Something went wrong, contact Javier with error code: " + ex.ErrorCode);
                             break;
                     }
                 }
@@ -113,7 +115,7 @@ namespace _254DiscordBot.Commands
             }
             else
             {
-                await ReplyAsync("Something went wrong, ask Hoovier for help! Error: " + Rows);
+                await ReplyAsync("Something went wrong, ask Javier for help! Error: " + Rows);
             }
         }
     }

@@ -4,6 +4,8 @@ using System.Text;
 
 namespace _254DiscordBot
 {
+    // Modified by: Javier Perez
+    // This class is just the object structure for the JSON response from SakugaBooru.
     class SakugaBooruResponse
     {
         public int Id { get; set; }

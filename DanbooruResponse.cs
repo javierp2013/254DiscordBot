@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace _254DiscordBot
 {
+    // Modified by: Javier Perez
+    // This class is just the object structure for the JSON response from DanBooru.
     public class DanbooruResponse
     {
         public class Image

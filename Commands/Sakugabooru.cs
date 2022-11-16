@@ -9,6 +9,8 @@ using ImageList = System.Collections.Generic.List<_254DiscordBot.SakugaBooruResp
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Javier Perez
+    // This class are all the SakugaBooru related commands.
     public class Sakugabooru : ModuleBase<SocketCommandContext>
     {
         [Command("sakuga")]

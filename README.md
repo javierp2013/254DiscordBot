@@ -16,6 +16,7 @@ TuffyBot is a helpful Booru surfing bot with friendly functions like role reacti
 - Ready to run!
 
 ## 📚 Features
+TuffyBot is a fun and useful bot that has many functions. Her main function is to make booru searches and post images matching that search. Using TuffyBot is as simple as running "!danbooru cats" to see all images in the danbooru database matching the search term for cat. Try her help command, !help, to learn more about how to use her various commands.
 - Booru search (Danbooru, Safebooru, Sakugabooru)
 	- Filter by tags, date, score, favorite count
 - Minigames
@@ -23,7 +24,7 @@ TuffyBot is a helpful Booru surfing bot with friendly functions like role reacti
 Reminders
 	- Time delayed bot messages to remind users of tasks.
 Help command
-	- Help menu to show users how to use the bot
+	- Help menu to show users how to use the bot.
 Roles
-	- Uses discords emoji reaction to assign roles to users automatically
+	- Uses discords emoji reaction to assign roles to users automatically.
 

@@ -9,6 +9,8 @@ using ImageList = System.Collections.Generic.List<_254DiscordBot.DanbooruRespons
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Javier Perez
+    // This class are all the Danbooru related commands.
     public class Danbooru : ModuleBase<SocketCommandContext>
     {
         [Command("dan")]

@@ -8,6 +8,8 @@ using Discord.Commands;
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Vincent Nguyen
+    // This class are all the reaction roles related commands.
     public class reactionRoles : ModuleBase<SocketCommandContext>
     {
         [Command("addrole")]
