@@ -6,6 +6,8 @@ using Discord.Commands;
 
 namespace CoreWaggles.Commands
 {
+    // Modified by: Vincent Nguyen
+    // This class are all the casino/betting/slots related commands.
     public class casino : ModuleBase<SocketCommandContext>
     {
 
@@ -43,7 +45,7 @@ namespace CoreWaggles.Commands
                 }
                 else
                 {
-                    await ReplyAsync("An error occurred! Contact Hoovier!");
+                    await ReplyAsync("An error occurred! Contact Javier!");
                 }
             }
             else
@@ -55,7 +57,7 @@ namespace CoreWaggles.Commands
                 }
                 else
                 {
-                    await ReplyAsync("An error occurred! Contact Hoovier!");
+                    await ReplyAsync("An error occurred! Contact Javier!");
                 }
             }
         }

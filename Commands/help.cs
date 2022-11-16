@@ -6,6 +6,8 @@ using Discord.Commands;
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Javier Perez
+    // This class are all the Help Menu related commands.
     public class help : ModuleBase<SocketCommandContext>
     {
         [Command("help")]

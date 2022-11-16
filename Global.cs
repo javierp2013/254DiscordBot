@@ -4,6 +4,9 @@ using System.Text;
 
 namespace _254DiscordBot
 {
+    // Modified by: Javier Perez
+    // This class is used as a static dictionary of data that the bot must keep in memory, such as the last search in each channel.
+    //it is a simple channelID -> data relationship
     internal static class Global
     {
         //holds the JSON for the last danbooru search in the channel

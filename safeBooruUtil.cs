@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace _254DiscordBot
 {
+    // Modified by: Javier Perez
+    // This class is just the response structure for the JSON object returned by API call.
     public class SafeBooruUtil
     {
         public class SafeOBJ

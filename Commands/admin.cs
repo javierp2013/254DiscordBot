@@ -8,6 +8,8 @@ using Discord.WebSocket;
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Javier Perez
+    // This class is just a command to manually update the database User table.
     public class admin : ModuleBase<SocketCommandContext>
     {
         [Command("updateusers")]

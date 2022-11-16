@@ -7,6 +7,8 @@ using Discord.WebSocket;
 
 namespace _254DiscordBot
 {
+    // Modified by: Javier Perez
+    // This class provides generic functions for accessing the database, useful for returning and writing data to the database for each command.
     internal static class DBCommands
     {
         //cs is connection string for DB

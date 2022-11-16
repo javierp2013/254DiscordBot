@@ -12,10 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace _254DiscordBot
 {
+    // Modified by: Javier Perez
+    // This class is the entry point for the program and provides the barebones functionality of the bot IE registration with Discord.
+    // Courtesy of official Discord.net documentation, much of the code in this file is from their barebones command bot.
     class Program
     {
-        // There is no need to implement IDisposable like before as we are
-        // using dependency injection, which handles calling Dispose for us.
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -117,7 +118,7 @@ namespace _254DiscordBot
                 }
                 catch
                 {
-                    await reactionUser.SendMessageAsync("Sorry, something went wrong, I am either unable to modify roles or the chosen role is above me in settings. Contact an admin or Hoovier#4192 for assistance!");
+                    await reactionUser.SendMessageAsync("Sorry, something went wrong, I am either unable to modify roles or the chosen role is above me in settings. Contact an admin or Javier#4192 for assistance!");
                     return;
                 }
                 await reactionUser.SendMessageAsync("Hi " + reactionUser.Username + "! I removed the " + chnl.Guild.GetRole(reactionRole).Name + " role!");

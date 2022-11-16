@@ -7,6 +7,8 @@ using Discord.WebSocket;
 
 namespace _254DiscordBot.Commands
 {
+    // Modified by: Vincent Nguyen
+    // This class are all the stock related commands.
     public class stonks : ModuleBase<SocketCommandContext>
     {
         [Command("addstonk")]
@@ -14,7 +16,7 @@ namespace _254DiscordBot.Commands
         {
             if (Context.User.Id != 223651215337193472)
             {
-                await ReplyAsync("Only Hoovier can run this command!");
+                await ReplyAsync("Only Javier can run this command!");
             }
             else
             {
@@ -28,7 +30,7 @@ namespace _254DiscordBot.Commands
         {
             if (Context.User.Id != 223651215337193472)
             {
-                await ReplyAsync("Only Hoovier can run this command!");
+                await ReplyAsync("Only Javier can run this command!");
             }
             else
             {
@@ -42,7 +44,7 @@ namespace _254DiscordBot.Commands
         {
             if (Context.User.Id != 223651215337193472)
             {
-                await ReplyAsync("Only Hoovier can run this command!");
+                await ReplyAsync("Only Javier can run this command!");
             }
             else
             {
