@@ -21,10 +21,10 @@ TuffyBot is a fun and useful bot that has many functions. Her main function is t
 	- Filter by tags, date, score, favorite count
 - Minigames
 	- Slot machine, stocks, betting
-Reminders
+- Reminders
 	- Time delayed bot messages to remind users of tasks.
-Help command
+- Help command
 	- Help menu to show users how to use the bot.
-Roles
+- Roles
 	- Uses discords emoji reaction to assign roles to users automatically.
 
