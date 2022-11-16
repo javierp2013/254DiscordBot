@@ -4,6 +4,7 @@
   </a>
 </p>
 TuffyBot is a helpful Booru surfing bot with friendly functions like role reactions and minigames! 
+
 ## 📄 Authors
 
 - Javier Perez
