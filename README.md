@@ -1,4 +1,6 @@
-﻿<p align="center">
+﻿# Project Part 2 for 254! 
+
+<p align="center">
   <a>
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/CSUF_Titans_Logo.svg/201px-CSUF_Titans_Logo.svg.png?20170424215842" alt="Logo">
   </a>

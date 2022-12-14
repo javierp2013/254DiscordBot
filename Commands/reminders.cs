@@ -8,6 +8,8 @@ using Discord.Commands;
 namespace _254DiscordBot.Commands
 {
     // Modified by: Vincent Nguyen
+    // [Part 2] Modified by: Jared De Los Santos
+    //          Inclusion of seconds in case of more specific timed reminders in a short duration.
     // This class are all the reminder related commands.
     public class reminders : ModuleBase<SocketCommandContext>
     {
@@ -16,12 +18,13 @@ namespace _254DiscordBot.Commands
         public async Task AddReminderAsync(string title, [Remainder] string interval)
         {
             string[] ArrayOfTime = interval.Split(" ");
-            int Time = 0;
+            double Time = 0;
             int Hours = 0, mins = 0;
+            double secs = 0;
             string Temp = "";
             foreach (var item in ArrayOfTime)
             {
-                if (!(item.Contains("H") || item.Contains("h") || item.Contains("M") || item.Contains("m")))
+                if (!(item.Contains("H") || item.Contains("h") || item.Contains("M") || item.Contains("m") || item.Contains("S") || item.Contains("s")))
                 {
                     await ReplyAsync("That's not gonna work! Make sure to format your response like ``~remindme \"to water the plants\" 2H 42M`` or ``~remindme homework 23h 55m``!");
                     return;
@@ -36,7 +39,13 @@ namespace _254DiscordBot.Commands
                 {
                     Temp = item.Trim(new char[] { 'M', 'm' });
                     mins = int.Parse(Temp);
-                    Time = Time + mins;
+                    Time = Time + (mins);
+                }
+                else if (item.Contains("S") || item.Contains("s"))
+                {
+                    Temp = item.Trim(new char[] { 'S', 's' });
+                    secs = int.Parse(Temp);
+                    Time = Time + (secs / 60);
                 }
 
             }
@@ -48,8 +57,8 @@ namespace _254DiscordBot.Commands
             {
                 try
                 {
-                    DBCommands.AddReminder(Context.User.Id, Context.Guild.Id, title, Time, DateTime.Now.ToString("yyyy-MM-dd.HH:mm:ss"));
-                    await ReplyAsync("I'll remind you in " + Hours + " hour(s) and " + mins + " minute(s)!");
+                    DBCommands.AddReminder(Context.User.Id, Context.Guild.Id, title, Convert.ToInt32(Time), DateTime.Now.ToString("yyyy-MM-dd.HH:mm:ss"));
+                    await ReplyAsync("I'll remind you in " + Hours + " hour(s) and " + mins + " minute(s) and " + secs + " second(s)!");
                 }
                 catch (SQLiteException ex)
                 {
@@ -96,7 +105,7 @@ namespace _254DiscordBot.Commands
                 //this gets the difference between how much time should pass, and how much has actually passed.
                 TimeSpan TimePassed = TimeTilReminder - Span;
 
-                Response = Response + "**" + item.Title + ":** in " + TimePassed.Hours + " Hours and " + TimePassed.Minutes + " Minutes.\n";
+                Response = Response + "**" + item.Title + ":** in " + TimePassed.Hours + " Hours and " + TimePassed.Minutes + " Minutes and " + TimePassed.Seconds + " Seconds.\n";
             }
             await ReplyAsync(Response);
         }

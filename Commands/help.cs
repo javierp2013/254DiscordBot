@@ -7,6 +7,8 @@ using Discord.Commands;
 namespace _254DiscordBot.Commands
 {
     // Modified by: Javier Perez
+    // [Part 2] Modified by: Jared De Los Santos
+    //          To aid with clarity when doing !help
     // This class are all the Help Menu related commands.
     public class help : ModuleBase<SocketCommandContext>
     {
@@ -19,6 +21,13 @@ namespace _254DiscordBot.Commands
             Builder.AddField("What is TuffyBot?", "TuffyBot is a bot to assist with searching image boards such as Danbooru, Safebooru, and Sakugabooru.");
             Builder.AddField("What can it do? It can:", "Play minigames!\nRun periodic reminders!\nAssign roles automatically!\nSearch image boards!\nMuch more!");
             Builder.AddField("Further Help.", "For more details you can run !help <topic>. I.E. ``!help minigames``");
+            Builder.AddField("Available commands checkable using \"!help <topic>\": ",
+                           "1. ``minigames``\n" +
+                           "2. ``reminders/reminder``\n" +
+                           "3. ``roles/rolereactions``\n" +
+                           "4. ``danbooru/dan``\n" +
+                           "5. ``sakugabooru/sk``\n" +
+                           "6. ``safebooru/sb``");
             Builder.WithThumbnailUrl("https://pbs.twimg.com/profile_images/1349407933872828416/hL5mjY6z_400x400.png");
             Builder.WithColor(Discord.Color.DarkOrange);
             await Context.Channel.SendMessageAsync("", false, Builder.Build());
